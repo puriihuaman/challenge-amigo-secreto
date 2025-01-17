@@ -28,25 +28,27 @@
         <div class="input-wrapper">
           <input
             type="text"
-            id="amigo"
+            id="friendName"
             class="input-name"
             placeholder="Escribe un nombre"
+            autofocus
           />
-          <button class="button-add" onclick="agregarAmigo()">Añadir</button>
+          <button class="button-add" onclick="addFriend();">Añadir</button>
         </div>
 
         <ul
-          id="listaAmigos"
+          id="friends-list"
           class="name-list"
           aria-labelledby="listaAmigos"
           role="list"
         ></ul>
-        <ul id="resultado" class="result-list" aria-live="polite"></ul>
+
+        <ul id="result" class="result-list" aria-live="polite"></ul>
 
         <div class="button-container">
           <button
             class="button-draw"
-            onclick="sortearAmigo()"
+            onclick="drawFriends()"
             aria-label="Sortear amigo secreto"
           >
             <img
@@ -55,7 +57,25 @@
             />
             Sortear amigo
           </button>
+
+          <button
+            class="button"
+            id="another-draw"
+            onclick="drawAgain();"
+            aria-label="Otro sorteo"
+            disabled
+          >
+            Otro sorteo
+          </button>
         </div>
+
+        <section>
+          <h2 class="section-title title-winner">Lista de ganadores</h2>
+
+          <ul id="winners" class="winners-list" aria-live="polite">
+            <li>No hay ganadores aún.</li>
+          </ul>
+        </section>
       </section>
     </main>
 
