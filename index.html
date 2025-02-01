@@ -1,84 +1,105 @@
 <!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="style.css" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@100;400;700;900&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&display=swap"
-      rel="stylesheet"
-    />
-    <title>Amigo Secreto</title>
-  </head>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="stylesheet" href="style.css" />
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Inter:wght@100;400;700;900&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&display=swap"
+			rel="stylesheet"
+		/>
+		<title>Amigo Secreto</title>
+	</head>
 
-  <body>
-    <main class="main-content">
-      <header class="header-banner">
-        <h1 class="main-title">Amigo Secreto</h1>
-        <img
-          src="assets/amigo-secreto.png"
-          alt="Imagen representativa de amigo secreto"
-        />
-      </header>
+	<body>
+		<main class="main-content">
+			<header class="header-banner">
+				<h1 class="main-title">Amigo Secreto</h1>
+				<img
+					src="assets/amigo-secreto.png"
+					alt="Imagen representativa de amigo secreto"
+					class="main-image"
+				/>
+			</header>
 
-      <section class="input-section">
-        <h2 class="section-title">Digite el nombre de sus amigos</h2>
-        <div class="input-wrapper">
-          <input
-            type="text"
-            id="friendName"
-            class="input-name"
-            placeholder="Escribe un nombre"
-            autofocus
-          />
-          <button class="button-add" onclick="addFriend();">Añadir</button>
-        </div>
+			<section class="input-section">
+				<h2 class="section-title">Digite el nombre de sus amigos</h2>
+				<div class="input-wrapper">
+					<input
+						type="text"
+						id="friendName"
+						class="input-name"
+						placeholder="Escribe un nombre"
+						autofocus
+					/>
+					<button class="button-add" onclick="addFriend();">Añadir</button>
+				</div>
 
-        <ul
-          id="friends-list"
-          class="name-list"
-          aria-labelledby="listaAmigos"
-          role="list"
-        ></ul>
+				<ul
+					id="friends-list"
+					class="name-list"
+					aria-labelledby="listaAmigos"
+					role="list"
+				>
+					<li>No hay ningún amigo</li>
+				</ul>
 
-        <ul id="result" class="result-list" aria-live="polite"></ul>
+				<ul id="result" class="result-list" aria-live="polite"></ul>
 
-        <div class="button-container">
-          <button
-            class="button-draw"
-            onclick="drawFriends()"
-            aria-label="Sortear amigo secreto"
-          >
-            <img
-              src="assets/play_circle_outline.png"
-              alt="Ícono para sortear"
-            />
-            Sortear amigo
-          </button>
+				<div class="button-container">
+					<button
+						class="button-draw"
+						onclick="drawFriends()"
+						aria-label="Sortear amigo secreto"
+					>
+						<img
+							src="assets/play_circle_outline.png"
+							alt="Ícono para sortear"
+						/>
+						Sortear amigo
+					</button>
 
-          <button
-            class="button"
-            id="another-draw"
-            onclick="drawAgain();"
-            aria-label="Otro sorteo"
-            disabled
-          >
-            Otro sorteo
-          </button>
-        </div>
+					<select
+						name="action"
+						id="action"
+						class="select-action"
+						onchange="handleAction();"
+					>
+						<option value="">Selecciona una opción</option>
+						<option value="another-draw" data-one="another-draw">
+							Otro sorteo
+						</option>
+						<option value="reset" data-reset="reset">
+							Vaciar lista de amigos
+						</option>
+						<option value="winners" data-winners="winners">
+							Ver amigos sorteados
+						</option>
+					</select>
+				</div>
 
-        <section>
-          <h2 class="section-title title-winner">Lista de ganadores</h2>
+				<section>
+					<dialog
+						id="dialog"
+						class="dialog-winners"
+						aria-labelledby="winners"
+						onclick="closeDialog();"
+					>
+						<h2 class="section-title title-winner">Amigos sorteados</h2>
+						<ul id="winners" class="winners-list" aria-live="polite">
+							<li>No hay amigos sorteados aún.</li>
+						</ul>
 
-          <ul id="winners" class="winners-list" aria-live="polite">
-            <li>No hay ganadores aún.</li>
-          </ul>
-        </section>
-      </section>
-    </main>
+						<button id="dialog-button" class="button" onclick="closeDialog();">
+							Cerrar
+						</button>
+					</dialog>
+				</section>
+			</section>
+		</main>
 
-    <script src="app.js" defer></script>
-  </body>
+		<script src="app.js" defer></script>
+	</body>
 </html>
