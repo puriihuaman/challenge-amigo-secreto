@@ -1,112 +1,267 @@
-const listFriends = [];
-const winnersList = [];
+let listFriends = [];
+let winnersList = [];
 
+const REGEX = /^[A-Za-záéíóúÁÉÍÓÚñÑ]+( [A-Za-záéíóúÁÉÍÓÚñÑ]+)*$/;
+
+/**
+ * Get the friend's name from the prompt
+ * @returns string
+ */
 function getFriendName() {
-  const friendName = document.getElementById("friendName").value;
+	const friendName = getHtmlElement("friendName").value.trim();
 
-  if (!friendName.trim() || friendName.trim() === "") {
-    alert("Por favor, inserte un nombre.");
-    return;
-  }
+	if (!REGEX.test(friendName) || !friendName) {
+		alert("Por favor, ingrese un nombre válido (solo letras y espacios).");
+		return null;
+	}
 
-  return friendName;
+	if (friendName.length < 2) {
+		alert("El nombre es muy corto (mínimo 2 letras).");
+		return null;
+	}
+
+	if (friendName.length > 50) {
+		alert("El nombre es muy largo (máximo 50 letras).");
+		return null;
+	}
+
+	return friendName;
 }
 
+/**
+ * Add the name to your friends list
+ */
 function addFriend() {
-  const name = getFriendName();
+	const name = getFriendName();
+	if (!name) {
+		return;
+	}
+	if (listFriends.includes(name)) {
+		alert("El amigo ya se encuentra en la lista.");
+		return;
+	}
+	listFriends.push(name);
 
-  if (listFriends.includes(name)) {
-    alert("El amigo ya se encuentra en la lista.");
-    return;
-  }
+	const input = getHtmlElement("friendName");
+	input.value = "";
+	input.focus();
 
-  listFriends.push(name);
-
-  const input = document.getElementById("friendName");
-  input.value = "";
-  input.focus();
-
-  showFriends();
+	showFriends();
 }
 
+/**
+ * Show friends names
+ */
 function showFriends() {
-  const friendsList = document.getElementById("friends-list");
-  friendsList.innerHTML = "";
-  const fragment = document.createDocumentFragment();
+	const friendsList = getHtmlElement("friends-list");
 
-  for (let index = 0; index < listFriends.length; index++) {
-    const friend = listFriends[index];
+	if (!friendsList) return;
 
-    const li = document.createElement("li");
+	friendsList.innerHTML = "";
 
-    li.textContent = friend;
-    fragment.prepend(li);
-  }
+	const fragment = document.createDocumentFragment();
+	friendsList.classList.add("fill");
 
-  friendsList.appendChild(fragment);
+	for (let index = 0; index < listFriends.length; index++) {
+		const friend = listFriends[index];
+
+		const li = document.createElement("li");
+
+		li.textContent = friend;
+		fragment.prepend(li);
+	}
+
+	friendsList.appendChild(fragment);
 }
 
+/**
+ * Generate a random number
+ * @returns number
+ */
 function generateRandomNumber() {
-  return Math.floor(Math.random() * listFriends.length);
+	return Math.floor(Math.random() * listFriends.length);
 }
 
+/**
+ * Run the draw
+ */
 function drawFriends() {
-  if (listFriends.length < 2) {
-    alert("Por favor, ingrese al menos dos amigos.");
-    return;
-  }
+	if (listFriends.length < 2) {
+		alert("Por favor, ingrese al menos dos amigos.");
+		return;
+	}
 
-  const randomNumber = generateRandomNumber();
-  const winnerName = listFriends.splice(randomNumber, 1);
-  showWinner(winnerName);
+	const randomNumber = generateRandomNumber();
+	const winnerName = listFriends.splice(randomNumber, 1);
+	showWinner(winnerName);
 }
 
+/**
+ * show the winner
+ * @param {string} winner
+ */
 function showWinner(winner) {
-  document.getElementById("friends-list").innerHTML = "";
-  const winnerElement = document.getElementById("result");
+	getHtmlElement("friends-list").innerHTML = "";
+	const winnerElement = getHtmlElement("result");
 
-  const item = document.createElement("li");
-  item.textContent = `El amigo secreto sorteado es: ${winner}`;
+	const item = document.createElement("li");
+	item.textContent = `El amigo secreto sorteado es: ${winner}`;
 
-  winnerElement.appendChild(item);
-  showWinners(winner);
+	winnerElement.appendChild(item);
+	getFriendDrawn(winner);
 
-  const anotherDraw = document.getElementById("another-draw");
-  anotherDraw.removeAttribute("disabled");
-  anotherDraw.classList.remove("disabled");
-
-  const buttonDraw = document.querySelector(".button-draw");
-  buttonDraw.setAttribute("disabled", true);
-  buttonDraw.classList.add("disabled");
+	const buttonDraw = getHtmlElement(".button-draw");
+	buttonDraw.setAttribute("disabled", true);
+	buttonDraw.classList.add("disabled");
 }
 
+/**
+ * Load the list of names that were not drawn.
+ * For another giveaway
+ */
 function drawAgain() {
-  document.getElementById("result").innerHTML = "";
-  showFriends();
+	if (listFriends.length === 0) {
+		getHtmlElement("result").innerHTML = "";
+		alert("No tienes ningún amigo. Ingresa los nombres de tus amigos.");
+		return;
+	}
+	getHtmlElement("result").innerHTML = "";
+	showFriends();
 
-  const buttonDraw = document.querySelector(".button-draw");
-  buttonDraw.removeAttribute("disabled");
-  buttonDraw.classList.remove("disabled");
-
-  const anotherDraw = document.getElementById("another-draw");
-  anotherDraw.setAttribute("disabled", true);
-  anotherDraw.classList.add("disabled");
+	const buttonDraw = getHtmlElement(".button-draw");
+	buttonDraw.removeAttribute("disabled");
+	buttonDraw.classList.remove("disabled");
 }
 
-function showWinners(winner) {
-  winnersList.push(winner);
+/**
+ * Obtener amigo sorteado
+ * @returns {string}
+ */
+function getFriendDrawn(raffledFriend) {
+	winnersList.push(raffledFriend);
+}
 
-  const winners = document.getElementById("winners");
+/**
+ * Mostrar lista de sorteados
+ */
+function showDrawnFriends() {
+	const dialog = document.getElementById("dialog");
+	const winners = document.getElementById("winners");
 
-  const fragment = document.createDocumentFragment();
-  winners.innerHTML = "";
+	if (!dialog || !winners) {
+		return;
+	}
 
-  for (let index = 0; index < winnersList.length; index++) {
-    const item = document.createElement("li");
+	if (winnersList.length === 0) {
+		alert("No has echo ningún sorteo aún.");
+		return;
+	}
 
-    item.textContent = winnersList[index];
-    fragment.prepend(item);
-  }
+	const fragment = document.createDocumentFragment();
+	winners.innerHTML = "";
 
-  winners.appendChild(fragment);
+	for (let index = 0; index < winnersList.length; index++) {
+		const item = document.createElement("li");
+
+		item.textContent = winnersList[index];
+		fragment.prepend(item);
+	}
+
+	winners.appendChild(fragment);
+
+	if (!dialog.open && winnersList.length > 0) {
+		dialog.showModal();
+	}
+}
+
+/**
+ * Close the modal
+ */
+function closeDialog() {
+	const dialog = getHtmlElement("dialog");
+	const selectAction = getHtmlElement(".select-action");
+
+	if (!dialog || !selectAction) {
+		return;
+	}
+
+	const buttonClose =
+		dialog.querySelector("button") || dialog.querySelector("#dialog-button");
+
+	dialog.addEventListener("mousedown", (event) => {
+		const rect = dialog.getBoundingClientRect();
+
+		const clickOutside =
+			event.clientX < rect.left ||
+			event.clientX > rect.right ||
+			event.clientY < rect.top ||
+			event.clientY > rect.bottom;
+
+		if (clickOutside) {
+			dialog.close();
+			selectAction.value = "";
+		}
+	});
+
+	buttonClose.addEventListener("click", () => {
+		dialog.close();
+		selectAction.value = "";
+	});
+}
+
+/**
+ * Reset lists
+ */
+function resetFriendsList() {
+	listFriends = [];
+	winnersList = [];
+	const friendsList = getHtmlElement("friends-list");
+	friendsList.innerHTML = `<li>No hay ningún amigo</li>`;
+	friendsList.classList.remove("fill");
+
+	getHtmlElement("result").innerHTML = "";
+	const buttonDraw = getHtmlElement(".button-draw");
+	buttonDraw.setAttribute("disabled", false);
+	buttonDraw.classList.remove("disabled");
+}
+
+/**
+ * Select an option
+ *
+ * @returns element
+ */
+function handleAction() {
+	const action = getHtmlElement("action");
+	if (!action) {
+		return;
+	}
+
+	switch (action.value.toLowerCase()) {
+		case "another-draw":
+			drawAgain();
+			break;
+		case "winners":
+			showDrawnFriends();
+			break;
+		case "reset":
+			resetFriendsList();
+			break;
+	}
+}
+
+/**
+ * Get an html element
+ * @param {string} selectorName
+ * @returns element
+ */
+function getHtmlElement(selectorName = "") {
+	if (!selectorName) return;
+
+	const element =
+		document.querySelector(selectorName) ||
+		document.getElementById(selectorName);
+
+	if (!element) return;
+
+	return element;
 }
